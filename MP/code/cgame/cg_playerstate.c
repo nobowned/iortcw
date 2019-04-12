@@ -133,18 +133,25 @@ void CG_DamageFeedback( int yawByte, int pitchByte, int damage ) {
 	// show the attacking player's head and name in corner
 	cg.attackerTime = cg.time;
 
+	if (cg_damageNudge.value >= 1.0f) {
 	// the lower on health you are, the greater the view kick will be
-	health = cg.snap->ps.stats[STAT_HEALTH];
-	if ( health < 40 ) {
-		scale = 1;
-	} else {
-		scale = 40.0 / health;
-	}
-	kick = damage * scale;
+		health = cg.snap->ps.stats[STAT_HEALTH];
+		if ( health < 40 ) {
+			scale = 1;
+		} else {
+			scale = 40.0 / health;
+		}
+	
+		kick = damage * scale;
 
-	if ( kick < 5 ) {
-		kick = 5;
+		if ( kick < 5 ) {
+			kick = 5;
+		}
+	} else {
+		scale = cg_damageNudge.value * 10;
+		kick = damage * scale;
 	}
+	
 	if ( kick > 10 ) {
 		kick = 10;
 	}
@@ -218,10 +225,6 @@ void CG_DamageFeedback( int yawByte, int pitchByte, int damage ) {
 		vd->damageY = -1.0;
 	}
 
-	// don't let the screen flashes vary as much
-	if ( kick > 10 ) {
-		kick = 10;
-	}
 	vd->damageValue = kick;
 	cg.v_dmg_time = cg.time + DAMAGE_TIME;
 	vd->damageTime = cg.snap->serverTime;

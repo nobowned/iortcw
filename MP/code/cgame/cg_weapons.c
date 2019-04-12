@@ -2647,7 +2647,9 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 		return;
 	}
 
-	if ( weaponNum == WP_STEN ) {  // sten has no muzzleflash
+	// sten has no muzzleflash
+	// or muzzle flash is disabled via cvar
+	if(weaponNum == WP_STEN || !cg_muzzleFlash.integer) {
 		flash.hModel = 0;
 	}
 

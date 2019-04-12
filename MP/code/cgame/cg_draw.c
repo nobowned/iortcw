@@ -1814,7 +1814,7 @@ static void CG_DrawCrosshair( void ) {
 	w = h = cg_crosshairSize.value;
 
 	// RF, crosshair size represents aim spread
-	f = (float)cg.snap->ps.aimSpreadScale / 255.0;
+	f = (float)((cg_crosshairPulse.integer == 0) ? 0 : cg.snap->ps.aimSpreadScale / 255.0);
 	w *= ( 1 + f * 2.0 );
 	h *= ( 1 + f * 2.0 );
 
@@ -2967,7 +2967,9 @@ static void CG_DrawFlashDamage( void ) {
 		}
 
 		VectorSet( col, 0.2, 0, 0 );
-		col[3] =  0.7 * ( redFlash / 5.0 );
+		col[3] = 0.7 * (redFlash / 5.0) * ((cg_bloodFlash.value > 1.0) ? 1.0 :
+			(cg_bloodFlash.value < 0.0) ? 0.0 :
+			cg_bloodFlash.value);
 
 		if ( cg_fixedAspect.integer ) {
 			CG_SetScreenPlacement(PLACE_STRETCH, PLACE_STRETCH);

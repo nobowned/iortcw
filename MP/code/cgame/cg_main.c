@@ -195,6 +195,11 @@ vmCvar_t cg_coronafardist;
 vmCvar_t cg_coronas;
 vmCvar_t cg_paused;
 vmCvar_t cg_blood;
+vmCvar_t cg_muzzleFlash;
+vmCvar_t cg_bloodFlash;
+vmCvar_t cg_bloodDamageBlend;
+vmCvar_t cg_crosshairPulse;
+vmCvar_t cg_damageNudge;
 vmCvar_t cg_predictItems;
 vmCvar_t cg_deferPlayers;
 vmCvar_t cg_drawTeamOverlay;
@@ -427,6 +432,11 @@ cvarTable_t cvarTable[] = {
 	{ &cg_paused, "cl_paused", "0", CVAR_ROM },
 
 	{ &cg_blood, "cg_showblood", "1", CVAR_ARCHIVE },
+	{ &cg_muzzleFlash, "cg_muzzleFlash", "1", CVAR_ARCHIVE },
+	{ &cg_bloodFlash, "cg_bloodFlash", "1.0", CVAR_ARCHIVE },
+	{ &cg_bloodDamageBlend, "cg_bloodDamageBlend", "1.0", CVAR_ARCHIVE },
+	{ &cg_crosshairPulse, "cg_crosshairPulse", "1", CVAR_ARCHIVE },
+	{ &cg_damageNudge, "cg_damageNudge", "1.0", CVAR_ARCHIVE },
 	{ &cg_synchronousClients, "g_synchronousClients", "0", CVAR_SYSTEMINFO },
 	{ &cg_currentSelectedPlayer, "cg_currentSelectedPlayer", "0", CVAR_ARCHIVE},
 	{ &cg_currentSelectedPlayerName, "cg_currentSelectedPlayerName", "", CVAR_ARCHIVE},
