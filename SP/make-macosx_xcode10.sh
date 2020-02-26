@@ -24,8 +24,8 @@ else
 	exit 1
 fi
 
-CC=gcc
-CXX=g++
+CC=clang
+CXX=clang++
 APPBUNDLE=iowolfsp.app
 BINARY=iowolfsp.${ARCH}
 PKGINFO=APPLIOTCW
@@ -56,11 +56,23 @@ Q3_VERSION=`grep '^VERSION=' Makefile | sed -e 's/.*=\(.*\)/\1/'`
 
 # We only care if we're >= 10.4, not if we're specifically Tiger.
 # "8" is the Darwin major kernel version.
-TIGERHOST=`uname -r |perl -w -p -e 's/\A(\d+)\..*\Z/$1/; $_ = (($_ >= 8) ? "1" : "0");'`
+unset TIGERHOST
+
+TIGERHOST=`uname -r |perl -w -p -e 's/\A(\d+)\..*\Z/$1/; $_ = (($_ >= 19) ? "1" : "0");'`
+
+unset XCVERSION
+
+XCVERSION=$(XCODE_VERSION_MAJOR)
 
 unset ARCH_CFLAGS
 
-ARCH_CFLAGS="-arch ${ARCH}"
+if [ "$XCVERSION" == "1100" ]; then
+	ARCH_CFLAGS="-arch ${ARCH} -mmacosx-version-min=10.9 -DMAC_OS_X_VERSION_MIN_REQUIRED=1090"
+elif [ "$XCVERSION" == "1000" ];
+	ARCH_CFLAGS="-arch ${ARCH} -mmacosx-version-min=10.9 -DMAC_OS_X_VERSION_MIN_REQUIRED=1090"
+else
+	ARCH_CFLAGS="-arch ${ARCH}"
+fi
 
 if [ ! -d $DESTDIR ]; then
 	mkdir -p $DESTDIR
@@ -85,7 +97,8 @@ if [ ! -d $DESTDIR/$APPBUNDLE/Contents/Resources ]; then
 fi
 cp $ICNS $DESTDIR/$APPBUNDLE/Contents/Resources/iortcw.icns || exit 1;
 echo $PKGINFO > $DESTDIR/$APPBUNDLE/Contents/PkgInfo
-echo "
+if [ "$TIGERHOST" == "1" ]; then
+	echo "
 	<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 	<!DOCTYPE plist
 		PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\"
@@ -118,12 +131,49 @@ echo "
 		<dict/>
 		<key>NSPrincipalClass</key>
 		<string>NSApplication</string>
-		<key>NSHighResolutionCapable</key>
-		<false/>
 	</dict>
 	</plist>
 	" > $DESTDIR/$APPBUNDLE/Contents/Info.plist
-
+else
+	echo "
+        <?xml version=\"1.0\" encoding=\"UTF-8\"?>
+        <!DOCTYPE plist
+                PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\"
+                \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+        <plist version=\"1.0\">
+        <dict>
+                <key>CFBundleDevelopmentRegion</key>
+                <string>English</string>
+                <key>CFBundleExecutable</key>
+                <string>$BINARY</string>
+                <key>CFBundleGetInfoString</key>
+                <string>iowolfsp $Q3_VERSION</string>
+                <key>CFBundleIconFile</key>
+                <string>iortcw.icns</string>
+                <key>CFBundleIdentifier</key>
+                <string>org.ioquake.iortcw</string>
+                <key>CFBundleInfoDictionaryVersion</key>
+                <string>6.0</string>
+                <key>CFBundleName</key>
+                <string>iowolfsp</string>
+                <key>CFBundlePackageType</key>
+                <string>APPL</string>
+                <key>CFBundleShortVersionString</key>
+                <string>$Q3_VERSION</string>
+                <key>CFBundleSignature</key>
+                <string>$PKGINFO</string>
+                <key>CFBundleVersion</key>
+                <string>$Q3_VERSION</string>
+                <key>NSExtensions</key>
+                <dict/>
+                <key>NSPrincipalClass</key>
+                <string>NSApplication</string>
+                <key>NSHighResolutionCapable</key>
+                <false/>
+        </dict>
+        </plist>
+        " > $DESTDIR/$APPBUNDLE/Contents/Info.plist
+fi
 
 cp $BIN_OBJ $DESTDIR/$APPBUNDLE/Contents/MacOS/$BINARY
 cp $RENDER_OBJ $DESTDIR/$APPBUNDLE/Contents/MacOS/
